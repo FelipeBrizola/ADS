@@ -12,11 +12,6 @@ public class Simulator {
 	public void run(int maxCapacity, int minArrivalCustomer, int maxArrivalCustomer,
 			int minAttendanceCustomer, int maxAttendanceCustomer,
 			float finalTime) {
-<<<<<<< HEAD
-=======
-
-		
->>>>>>> fa35ff42fb07302b4d41553603045bb63c818366
 	}
 
 	private float getMinTime(String event) {

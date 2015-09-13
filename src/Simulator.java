@@ -4,11 +4,14 @@ import java.util.Queue;
 public class Simulator {
 
 	public Queue<Scheduler> schedQueue = new LinkedList<Scheduler>();
+	int servers = 1;
+	int queue = 0;
+	float globalTime = 0f;
+	int eventCount = 1;
 
 	public void run(int maxCapacity, int minArrivalCustomer, int maxArrivalCustomer,
 			int minAttendanceCustomer, int maxAttendanceCustomer,
 			float finalTime) {
-
 	}
 
 	public float getMinTime(String event) {
@@ -19,6 +22,43 @@ public class Simulator {
 				min = sched.getTime();
 		}
 		return min;
+	}
+	
+	private void arrival(int minArrival, int maxArrival, int minOutput, int maxOutput) {
+		//todo contabilizar tempo
+		if(queue < servers){
+			queue++;
+			if(queue <= servers) {
+				scheduleOutput(minOutput, maxOutput);
+			}
+		}
+		scheduleArrival(minArrival, maxArrival);
+	}
+	
+	private void output(int minOutput, int maxOutput) {
+		//todo contabilizar tempo
+		queue--;
+		if(queue >= servers){
+			scheduleOutput(minOutput, maxOutput);
+		}
+	}
+	
+	private void scheduleArrival(int minArrival, int maxArrival){
+		String eventName = eventCount+"CH";
+		float sortition = generatePseudoRandom(minArrival, maxArrival);
+		float time = globalTime + sortition;
+		Scheduler arrival = new Scheduler(eventName, time, sortition);
+		schedQueue.add(arrival);
+		eventCount++;
+	}
+	
+	private void scheduleOutput(int minOutput, int maxOutput){
+		String eventName = eventCount+"SA";
+		float sortition = generatePseudoRandom(minOutput, maxOutput);
+		float time = globalTime + sortition;
+		Scheduler output = new Scheduler(eventName, time, sortition);
+		schedQueue.add(output);
+		eventCount++;
 	}
 
 	private float generatePseudoRandom(float init, float finish) {

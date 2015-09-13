@@ -5,6 +5,12 @@ public class Scheduler {
 	private float time;
 	private float sortition;
 	
+	public Scheduler(String event, float time, float sortition){
+		this.event = event;
+		this.time = time;
+		this.sortition = sortition;
+	}
+	
 	public String getEvent() {
 		return event;
 	}

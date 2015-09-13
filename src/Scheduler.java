@@ -1,22 +1,26 @@
 
 public class Scheduler {
 
-	private String event;
+	private int eventNumber;
+	private EventType eventType;
 	private float time;
 	private float sortition;
 	
-	public Scheduler(String event, float time, float sortition){
-		this.event = event;
+	public Scheduler(EventType eventType, int eventNumber, float time, float sortition){
+		this.eventType = eventType;
 		this.time = time;
 		this.sortition = sortition;
+		this.eventNumber = eventNumber;
 	}
 	
-	public String getEvent() {
-		return event;
+	public int getEventNumber() {
+		return eventNumber;
 	}
-	public void setEvent(String event) {
-		this.event = event;
+	
+	public EventType getEventType() {
+		return eventType;
 	}
+
 	public float getTime() {
 		return time;
 	}

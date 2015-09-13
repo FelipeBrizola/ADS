@@ -7,6 +7,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 public class Simulator {
 
 	public ArrayList<Scheduler> schedQueue = new ArrayList<Scheduler>();
+	public ArrayList<ResultTable> result = new ArrayList<ResultTable>();
 	int servers = 1;
 	int queue = 0;
 	float globalTime = 0f;
@@ -18,23 +19,39 @@ public class Simulator {
 		
 		//Primeira chegada é agendada na 'mão' 
 		schedQueue.add(new Scheduler(EventType.CH, eventCount, minArrivalCustomer, 0f));
+		queue++;
 		eventCount++;
 		
 		//Simulação dentro do tempo máximo
 		while(globalTime < finalTime) {
-			throw new NotImplementedException();
-			//Scheduler sc = getMinScheduler(?);
+			Scheduler sc = getMinScheduler();
 			
+			globalTime = sc.getTime();
+			
+			ResultTable res = new ResultTable(maxCapacity);
+			res.setEvent(sc.getEventNumber()+sc.getEventType().toString());
+			res.setGlobalTime(globalTime);
+			
+			if(sc.getEventType() == EventType.CH) {
+				runArrival(minArrivalCustomer, maxArrivalCustomer, minAttendanceCustomer, maxAttendanceCustomer);
+				res.setTotalQueue(queue);
+			} 
+			else {
+				runOutput(minAttendanceCustomer, maxAttendanceCustomer);
+				res.setTotalQueue(queue);
+			}
+			
+			result.add(res);
 		}
 		
 	}
 	
-	private Scheduler getMinScheduler(EventType event) {
-		Scheduler min = new Scheduler(event, 0, Float.MAX_VALUE, 0f);
+	private Scheduler getMinScheduler() {
+		Scheduler min = new Scheduler(EventType.CH, 0, Float.MAX_VALUE, 0f);
 		int i;
 		for (i = 0; i < schedQueue.size(); i++) {
 			Scheduler sched = schedQueue.get(i);
-			if (sched.getTime() < min.getTime() && event == sched.getEventType())
+			if (sched.getTime() < min.getTime())
 				min = sched;
 		}
 		
@@ -43,7 +60,7 @@ public class Simulator {
 			throw new NotImplementedException();
 		}
 		
-		schedQueue.remove(i);
+		schedQueue.remove(i-1);
 		return min;
 	}
 
@@ -59,7 +76,7 @@ public class Simulator {
 	
 	//Contabiliza tempos
 	private void countingTime() {
-		globalTime += schedQueue.get(schedQueue.size()-1).getSortition();
+		//globalTime += schedQueue.get(schedQueue.size()-1).getSortition();
 	}
 	
 	//algoritmo de chegada
@@ -105,6 +122,10 @@ public class Simulator {
 	private float generatePseudoRandom(float init, float finish) {
 		double seed = Math.random();
 		return (float) (((finish - init) * seed) + init);
+	}
+	
+	public ArrayList<ResultTable> getResult(){
+		return result;
 	}
 	
 }

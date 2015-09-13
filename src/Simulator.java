@@ -9,17 +9,20 @@ public class Simulator {
 	public ArrayList<Scheduler> schedQueue = new ArrayList<Scheduler>();
 	public ArrayList<ResultTable> result = new ArrayList<ResultTable>();
 	int servers = 1;
+	int maxCapacity;
 	int queue = 0;
 	float globalTime = 0f;
 	int eventCount = 1;
+	
 
 	public void run(int maxCapacity, int minArrivalCustomer, int maxArrivalCustomer,
 			int minAttendanceCustomer, int maxAttendanceCustomer,
 			float finalTime) {
 		
+		this.maxCapacity = maxCapacity;
+		
 		//Primeira chegada é agendada na 'mão' 
 		schedQueue.add(new Scheduler(EventType.CH, eventCount, minArrivalCustomer, 0f));
-		queue++;
 		eventCount++;
 		
 		//Simulação dentro do tempo máximo
@@ -48,19 +51,19 @@ public class Simulator {
 	
 	private Scheduler getMinScheduler() {
 		Scheduler min = new Scheduler(EventType.CH, 0, Float.MAX_VALUE, 0f);
-		int i;
-		for (i = 0; i < schedQueue.size(); i++) {
+		int removeIndex = -1;
+		for (int i = 0; i < schedQueue.size(); i++) {
 			Scheduler sched = schedQueue.get(i);
-			if (sched.getTime() < min.getTime())
+			if (sched.getTime() < min.getTime()) {
 				min = sched;
+				removeIndex = i;
+			}
 		}
-		
 		if(min.getTime() == Float.MAX_VALUE) {
 			//gerar uma exceção personalizada caso nao encontre alguem no escalonador
 			throw new NotImplementedException();
 		}
-		
-		schedQueue.remove(i-1);
+		schedQueue.remove(removeIndex);
 		return min;
 	}
 
@@ -82,7 +85,7 @@ public class Simulator {
 	//algoritmo de chegada
 	private void runArrival(int minArrival, int maxArrival, int minOutput, int maxOutput) {
 		countingTime();
-		if(queue < servers){
+		if(queue < maxCapacity){
 			queue++;
 			if(queue <= servers) {
 				scheduleOutput(minOutput, maxOutput);
@@ -127,5 +130,4 @@ public class Simulator {
 	public ArrayList<ResultTable> getResult(){
 		return result;
 	}
-	
 }

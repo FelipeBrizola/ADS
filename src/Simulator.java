@@ -9,9 +9,10 @@ public class Simulator {
 			int minAttendanceCustomer, int maxAttendanceCustomer,
 			float finalTime) {
 
+		
 	}
 
-	public float getMinTime(String event) {
+	private float getMinTime(String event) {
 		// marcar como ja lido ou trocar fila por lista e remover
 		float min = schedQueue.peek().getTime();
 		for (Scheduler sched : schedQueue) {
@@ -25,5 +26,5 @@ public class Simulator {
 		double seed = Math.random();
 		return (float) (((finish - init) * seed) + init);
 	}
-
+	
 }

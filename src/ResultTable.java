@@ -43,4 +43,10 @@ public class ResultTable {
 		this.queueSize = queueSize;
 	}
 	
+	public float getQueueValue(int index){
+		return this.queueSize[index];
+	}
+	public void setQueueValue(float value, int index){
+		this.queueSize[index] = value;
+	}
 }

@@ -21,17 +21,18 @@ public class Simulator {
 		
 		this.maxCapacity = maxCapacity;
 		
-		//Primeira chegada é agendada na 'mão' 
+		//Primeira chegada ï¿½ agendada na 'mï¿½o' 
 		schedQueue.add(new Scheduler(EventType.CH, eventCount, minArrivalCustomer, 0f));
 		eventCount++;
 		
-		//Simulação dentro do tempo máximo
+		//Simulaï¿½ï¿½o dentro do tempo mï¿½ximo
 		while(globalTime < finalTime) {
 			Scheduler sc = getMinScheduler();
 			
 			globalTime = sc.getTime();
 			
-			ResultTable res = new ResultTable(maxCapacity);
+			ResultTable res = new ResultTable(maxCapacity);			
+			
 			res.setEvent(sc.getEventNumber()+sc.getEventType().toString());
 			res.setGlobalTime(globalTime);
 			
@@ -60,7 +61,7 @@ public class Simulator {
 			}
 		}
 		if(min.getTime() == Float.MAX_VALUE) {
-			//gerar uma exceção personalizada caso nao encontre alguem no escalonador
+			//gerar uma exceï¿½ï¿½o personalizada caso nao encontre alguem no escalonador
 			throw new NotImplementedException();
 		}
 		schedQueue.remove(removeIndex);
@@ -79,7 +80,7 @@ public class Simulator {
 	
 	//Contabiliza tempos
 	private void countingTime() {
-		//globalTime += schedQueue.get(schedQueue.size()-1).getSortition();
+		
 	}
 	
 	//algoritmo de chegada
@@ -94,7 +95,7 @@ public class Simulator {
 		scheduleArrival(minArrival, maxArrival);
 	}
 	
-	//algoritmo de saída
+	//algoritmo de saï¿½da
 	private void runOutput(int minOutput, int maxOutput) {
 		countingTime();
 		queue--;
@@ -112,7 +113,7 @@ public class Simulator {
 		eventCount++;
 	}
 
-	//agenda saída
+	//agenda saï¿½da
 	private void scheduleOutput(int minOutput, int maxOutput){
 		float sortition = generatePseudoRandom(minOutput, maxOutput);
 		float time = globalTime + sortition;
@@ -121,7 +122,7 @@ public class Simulator {
 		eventCount++;
 	}
 	
-	//gera um pseudo aleatório
+	//gera um pseudo aleatï¿½rio
 	private float generatePseudoRandom(float init, float finish) {
 		double seed = Math.random();
 		return (float) (((finish - init) * seed) + init);

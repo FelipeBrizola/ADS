@@ -21,33 +21,34 @@ public class Simulator {
 		
 		this.maxCapacity = maxCapacity;
 		
-		//Primeira chegada � agendada na 'm�o' 
+		//Primeira chegada eh agendada na 'mao' 
 		schedQueue.add(new Scheduler(EventType.CH, eventCount, minArrivalCustomer, 0f));
 		eventCount++;
+		ResultTable res = new ResultTable(maxCapacity);
 		
-		//Simula��o dentro do tempo m�ximo
+		//Simulacao dentro do tempo maximo
 		while(globalTime < finalTime) {
 			Scheduler sc = getMinScheduler();
 			
 			globalTime = sc.getTime();
 			
-			ResultTable res = new ResultTable(maxCapacity);			
-			
 			res.setEvent(sc.getEventNumber()+sc.getEventType().toString());
 			res.setGlobalTime(globalTime);
+			
+			
 			
 			if(sc.getEventType() == EventType.CH) {
 				runArrival(minArrivalCustomer, maxArrivalCustomer, minAttendanceCustomer, maxAttendanceCustomer);
 				res.setTotalQueue(queue);
 			} 
-			else {
+			else
+			{
 				runOutput(minAttendanceCustomer, maxAttendanceCustomer);
 				res.setTotalQueue(queue);
 			}
 			
 			result.add(res);
 		}
-		
 	}
 	
 	private Scheduler getMinScheduler() {
@@ -61,7 +62,7 @@ public class Simulator {
 			}
 		}
 		if(min.getTime() == Float.MAX_VALUE) {
-			//gerar uma exce��o personalizada caso nao encontre alguem no escalonador
+			//gerar uma excecao personalizada caso nao encontre alguem no escalonador
 			throw new NotImplementedException();
 		}
 		schedQueue.remove(removeIndex);
@@ -80,7 +81,11 @@ public class Simulator {
 	
 	//Contabiliza tempos
 	private void countingTime() {
-		
+		ResultTable currentState = result.get(result.size()-1);
+				ResultTable beforeState = result.get(result.size()-2);				
+		float diffTime = currentState.getGlobalTime() - beforeState.getGlobalTime(); 
+		int queueIndex = beforeState.getTotalQueue();
+		currentState.setQueueValue(diffTime + beforeState.getQueueValue(queueIndex), queueIndex);
 	}
 	
 	//algoritmo de chegada
@@ -113,7 +118,7 @@ public class Simulator {
 		eventCount++;
 	}
 
-	//agenda sa�da
+	//agenda saida
 	private void scheduleOutput(int minOutput, int maxOutput){
 		float sortition = generatePseudoRandom(minOutput, maxOutput);
 		float time = globalTime + sortition;
@@ -122,7 +127,7 @@ public class Simulator {
 		eventCount++;
 	}
 	
-	//gera um pseudo aleat�rio
+	//gera um pseudo aleatorio
 	private float generatePseudoRandom(float init, float finish) {
 		double seed = Math.random();
 		return (float) (((finish - init) * seed) + init);
@@ -131,4 +136,5 @@ public class Simulator {
 	public ArrayList<ResultTable> getResult(){
 		return result;
 	}
+	
 }

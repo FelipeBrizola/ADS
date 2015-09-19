@@ -21,11 +21,21 @@ public class Simulator {
 		
 		this.maxCapacity = maxCapacity;
 		
-		//Primeira chegada ï¿½ agendada na 'mï¿½o' 
+		//primeiro resultado é zerado
+		ResultTable initial = new ResultTable(maxCapacity);
+		initial.setEvent("-");
+		initial.setGlobalTime(0f);
+		initial.setTotalQueue(0);
+		for (int i = 0; i < initial.getQueueSize().length; i++) {
+			initial.setQueueValue(0, i);
+		}
+		result.add(initial);
+		
+		//Primeira chegada agendada na mao 
 		schedQueue.add(new Scheduler(EventType.CH, eventCount, minArrivalCustomer, 0f));
 		eventCount++;
 		
-		//Simulaï¿½ï¿½o dentro do tempo mï¿½ximo
+		//Simulacao dentro do tempo maximo
 		while(globalTime < finalTime) {
 			Scheduler sc = getMinScheduler();
 			
@@ -61,7 +71,7 @@ public class Simulator {
 			}
 		}
 		if(min.getTime() == Float.MAX_VALUE) {
-			//gerar uma exceï¿½ï¿½o personalizada caso nao encontre alguem no escalonador
+			//gerar uma excecao personalizada caso nao encontre alguem no escalonador
 			throw new NotImplementedException();
 		}
 		schedQueue.remove(removeIndex);
@@ -95,7 +105,7 @@ public class Simulator {
 		scheduleArrival(minArrival, maxArrival);
 	}
 	
-	//algoritmo de saï¿½da
+	//algoritmo de saida
 	private void runOutput(int minOutput, int maxOutput) {
 		countingTime();
 		queue--;
@@ -113,7 +123,7 @@ public class Simulator {
 		eventCount++;
 	}
 
-	//agenda saï¿½da
+	//agenda saida
 	private void scheduleOutput(int minOutput, int maxOutput){
 		float sortition = generatePseudoRandom(minOutput, maxOutput);
 		float time = globalTime + sortition;
@@ -122,10 +132,19 @@ public class Simulator {
 		eventCount++;
 	}
 	
-	//gera um pseudo aleatï¿½rio
+	//gera um pseudo aleatorio
+	float[] pseudo = {0.8f, 0.2f, 0.4f, 0.7f, 0.5f, 0.3f };  	
 	private float generatePseudoRandom(float init, float finish) {
-		double seed = Math.random();
-		return (float) (((finish - init) * seed) + init);
+//		double seed = Math.random();
+//		return (float) (((finish - init) * seed) + init);
+		float val = 0f;
+		for(int i = 0; i < pseudo.length; i++){
+			if(pseudo[i] > 0) {
+				val = pseudo[i];
+				pseudo[i] = -1f;
+			}
+		}
+		return val;
 	}
 	
 	public ArrayList<ResultTable> getResult(){

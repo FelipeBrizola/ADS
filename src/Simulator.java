@@ -20,17 +20,27 @@ public class Simulator {
 			float finalTime) {
 		
 		this.maxCapacity = maxCapacity;
+
+		ResultTable initial = new ResultTable(maxCapacity);
+		initial.setEvent("-");
+		initial.setGlobalTime(0f);
+		initial.setTotalQueue(0);
+		for (int i = 0; i < initial.getQueueSize().length; i++) {
+			initial.setQueueValue(0, i);
+		}
+		result.add(initial);
 		
-		//Primeira chegada eh agendada na 'mao' 
+		//Primeira chegada agendada na mao 
 		schedQueue.add(new Scheduler(EventType.CH, eventCount, minArrivalCustomer, 0f));
 		eventCount++;
-		ResultTable res = new ResultTable(maxCapacity);
 		
 		//Simulacao dentro do tempo maximo
 		while(globalTime < finalTime) {
 			Scheduler sc = getMinScheduler();
 			
 			globalTime = sc.getTime();
+			
+			ResultTable res = new ResultTable(maxCapacity);
 			
 			res.setEvent(sc.getEventNumber()+sc.getEventType().toString());
 			res.setGlobalTime(globalTime);
@@ -100,7 +110,7 @@ public class Simulator {
 		scheduleArrival(minArrival, maxArrival);
 	}
 	
-	//algoritmo de sa�da
+	//algoritmo de saida
 	private void runOutput(int minOutput, int maxOutput) {
 		countingTime();
 		queue--;
@@ -128,9 +138,20 @@ public class Simulator {
 	}
 	
 	//gera um pseudo aleatorio
+
+	float[] pseudo = {0.8f, 0.2f, 0.4f, 0.7f, 0.5f, 0.3f };  	
+	
 	private float generatePseudoRandom(float init, float finish) {
-		double seed = Math.random();
-		return (float) (((finish - init) * seed) + init);
+//		double seed = Math.random();
+//		return (float) (((finish - init) * seed) + init);
+		float val = 0f;
+		for(int i = 0; i < pseudo.length; i++){
+			if(pseudo[i] > 0) {
+				val = pseudo[i];
+				pseudo[i] = -1f;
+			}
+		}
+		return val;
 	}
 	
 	public ArrayList<ResultTable> getResult(){

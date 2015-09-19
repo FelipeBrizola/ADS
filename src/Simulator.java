@@ -1,6 +1,5 @@
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.Arrays;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -9,19 +8,18 @@ public class Simulator {
 	public ArrayList<Scheduler> schedQueue = new ArrayList<Scheduler>();
 	public ArrayList<ResultTable> result = new ArrayList<ResultTable>();
 	int servers = 1;
-	int maxCapacity;
+	int capacity;
 	int queue = 0;
 	float globalTime = 0f;
 	int eventCount = 1;
-	
 
 	public void run(int maxCapacity, int minArrivalCustomer, int maxArrivalCustomer,
 			int minAttendanceCustomer, int maxAttendanceCustomer,
 			float finalTime) {
 		
-		this.maxCapacity = maxCapacity;
+		this.capacity = maxCapacity;
 
-		ResultTable initial = new ResultTable(maxCapacity);
+		ResultTable initial = new ResultTable(maxCapacity+1);
 		initial.setEvent("-");
 		initial.setGlobalTime(0f);
 		initial.setTotalQueue(0);
@@ -40,11 +38,12 @@ public class Simulator {
 			
 			globalTime = sc.getTime();
 			
-			ResultTable res = new ResultTable(maxCapacity);
+			ResultTable res = new ResultTable(maxCapacity+1);
 			
 			res.setEvent(sc.getEventNumber()+sc.getEventType().toString());
 			res.setGlobalTime(globalTime);
 			
+			result.add(res);
 			
 			
 			if(sc.getEventType() == EventType.CH) {
@@ -56,8 +55,7 @@ public class Simulator {
 				runOutput(minAttendanceCustomer, maxAttendanceCustomer);
 				res.setTotalQueue(queue);
 			}
-			
-			result.add(res);
+	
 		}
 	}
 	
@@ -92,7 +90,7 @@ public class Simulator {
 	//Contabiliza tempos
 	private void countingTime() {
 		ResultTable currentState = result.get(result.size()-1);
-				ResultTable beforeState = result.get(result.size()-2);				
+		ResultTable beforeState = result.get(result.size()-2);				
 		float diffTime = currentState.getGlobalTime() - beforeState.getGlobalTime(); 
 		int queueIndex = beforeState.getTotalQueue();
 		currentState.setQueueValue(diffTime + beforeState.getQueueValue(queueIndex), queueIndex);
@@ -101,7 +99,7 @@ public class Simulator {
 	//algoritmo de chegada
 	private void runArrival(int minArrival, int maxArrival, int minOutput, int maxOutput) {
 		countingTime();
-		if(queue < maxCapacity){
+		if(queue < capacity){
 			queue++;
 			if(queue <= servers) {
 				scheduleOutput(minOutput, maxOutput);
@@ -138,20 +136,21 @@ public class Simulator {
 	}
 	
 	//gera um pseudo aleatorio
-
-	float[] pseudo = {0.8f, 0.2f, 0.4f, 0.7f, 0.5f, 0.3f };  	
+	
+	float[] pseudo = new float[]{0.8f, 0.2f, 0.4f,0.7f,0.5f,0.3f};
 	
 	private float generatePseudoRandom(float init, float finish) {
 //		double seed = Math.random();
 //		return (float) (((finish - init) * seed) + init);
 		float val = 0f;
-		for(int i = 0; i < pseudo.length; i++){
+		for(int i = 0; i < pseudo.length ; i++){
 			if(pseudo[i] > 0) {
 				val = pseudo[i];
 				pseudo[i] = -1f;
+				return (float) (((finish - init) * val) + init);
 			}
 		}
-		return val;
+		return (float) (((finish - init) * val) + init);
 	}
 	
 	public ArrayList<ResultTable> getResult(){

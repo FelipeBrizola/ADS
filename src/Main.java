@@ -6,7 +6,8 @@ public class Main {
 
 		Simulator s = new Simulator();
 		
-		s.run(5, 2, 3, 3, 4, 100);
+		s.run(2, 2, 3, 3, 4, 7);
+		
 		System.out.println("Evento   | Fila   | Tempo   ");
 		for(ResultTable res : s.getResult()){
 			System.out.println(res.getEvent()+ "   " + res.getTotalQueue() + "   " +  res.getGlobalTime() + "	" );

@@ -3,10 +3,10 @@ public class Scheduler {
 
 	private int eventNumber;
 	private EventType eventType;
-	private float time;
-	private float sortition;
+	private double time;
+	private double sortition;
 	
-	public Scheduler(EventType eventType, int eventNumber, float time, float sortition){
+	public Scheduler(EventType eventType, int eventNumber, double time, double sortition){
 		this.eventType = eventType;
 		this.time = time;
 		this.sortition = sortition;
@@ -21,16 +21,16 @@ public class Scheduler {
 		return eventType;
 	}
 
-	public float getTime() {
+	public double getTime() {
 		return time;
 	}
-	public void setTime(float time) {
+	public void setTime(double time) {
 		this.time = time;
 	}
-	public float getSortition() {
+	public double getSortition() {
 		return sortition;
 	}
-	public void setSortition(float sortition) {
+	public void setSortition(double sortition) {
 		this.sortition = sortition;
 	}
 }

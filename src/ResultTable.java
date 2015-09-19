@@ -3,12 +3,12 @@ public class ResultTable {
 
 	private String event;
 	private int totalQueue;
-	private float globalTime;
-	private float[] queueSize;
+	private double globalTime;
+	private double[] queueSize;
 	
 	public ResultTable(int queueSize) 
 	{	
-		this.queueSize =  new float[queueSize];
+		this.queueSize =  new double[queueSize+1];
 	}
 
 	public String getEvent() {
@@ -27,26 +27,36 @@ public class ResultTable {
 		this.totalQueue = totalQueue;
 	}
 
-	public float getGlobalTime() {
+	public double getGlobalTime() {
 		return globalTime;
 	}
 
-	public void setGlobalTime(float globalTime) {
+	public void setGlobalTime(double globalTime) {
 		this.globalTime = globalTime;
 	}
 
-	public float[] getQueueSize() {
+	public double[] getQueueSize() {
 		return queueSize;
 	}
 
-	public void setQueueSize(float[] queueSize) {
+	public void setQueueSize(double[] queueSize) {
 		this.queueSize = queueSize;
 	}
 	
-	public float getQueueValue(int index){
+	public double getQueueValue(int index){
 		return this.queueSize[index];
 	}
-	public void setQueueValue(float value, int index){
+	public void setQueueValue(double value, int index){
 		this.queueSize[index] = value;
+	}
+	
+	@Override
+	public String toString(){
+		String q = "";
+		for (int i = 0; i < queueSize.length; i++) {
+			String format = String.format("%.2f", queueSize[i]);
+			q += "|" + format; 
+		}
+		return "EV:" + this.event + " F:" + this.totalQueue + " T" + String.format("%.2f", this.globalTime) + " Q:"+q;
 	}
 }

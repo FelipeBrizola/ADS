@@ -1,25 +1,24 @@
 import java.util.ArrayList;
-import java.util.Arrays;
-
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class Simulator {
 
-	public ArrayList<Scheduler> schedQueue = new ArrayList<Scheduler>();
-	public ArrayList<ResultTable> result = new ArrayList<ResultTable>();
-	int servers = 1;
+	private ArrayList<Scheduler> schedQueue = new ArrayList<Scheduler>();
+	private ArrayList<ResultTable> result = new ArrayList<ResultTable>();
+	int servers;
 	int capacity;
 	int queue = 0;
-	float globalTime = 0f;
+	double globalTime = 0f;
 	int eventCount = 1;
 
-	public void run(int maxCapacity, int minArrivalCustomer, int maxArrivalCustomer,
+	public void run(int maxCapacity, int maxServers, int minArrivalCustomer, int maxArrivalCustomer,
 			int minAttendanceCustomer, int maxAttendanceCustomer,
-			float finalTime) {
+			double finalTime) {
 		
 		this.capacity = maxCapacity;
+		this.servers = maxServers;
 
-		ResultTable initial = new ResultTable(maxCapacity+1);
+		ResultTable initial = new ResultTable(maxCapacity);
 		initial.setEvent("-");
 		initial.setGlobalTime(0f);
 		initial.setTotalQueue(0);
@@ -38,29 +37,36 @@ public class Simulator {
 			
 			globalTime = sc.getTime();
 			
-			ResultTable res = new ResultTable(maxCapacity+1);
+			ResultTable res = new ResultTable(maxCapacity);
 			
 			res.setEvent(sc.getEventNumber()+sc.getEventType().toString());
 			res.setGlobalTime(globalTime);
 			
 			result.add(res);
-			
-			
+		
 			if(sc.getEventType() == EventType.CH) {
 				runArrival(minArrivalCustomer, maxArrivalCustomer, minAttendanceCustomer, maxAttendanceCustomer);
-				res.setTotalQueue(queue);
 			} 
-			else
-			{
+			else {
 				runOutput(minAttendanceCustomer, maxAttendanceCustomer);
-				res.setTotalQueue(queue);
 			}
-	
+			res.setTotalQueue(queue);
 		}
 	}
 	
+	public double[] getProbabilities()
+	{
+		double probabilities[] = new double[capacity+1];
+		ResultTable res = result.get(result.size()-1);
+		for (int i = 0; i < res.getQueueSize().length; i++) {
+			probabilities[i] = res.getQueueValue(i) / res.getGlobalTime();
+		}
+		
+		return probabilities;
+	}
+	
 	private Scheduler getMinScheduler() {
-		Scheduler min = new Scheduler(EventType.CH, 0, Float.MAX_VALUE, 0f);
+		Scheduler min = new Scheduler(EventType.CH, 0, Double.MAX_VALUE, 0f);
 		int removeIndex = -1;
 		for (int i = 0; i < schedQueue.size(); i++) {
 			Scheduler sched = schedQueue.get(i);
@@ -69,7 +75,7 @@ public class Simulator {
 				removeIndex = i;
 			}
 		}
-		if(min.getTime() == Float.MAX_VALUE) {
+		if(min.getTime() == Double.MAX_VALUE) {
 			//gerar uma excecao personalizada caso nao encontre alguem no escalonador
 			throw new NotImplementedException();
 		}
@@ -77,23 +83,21 @@ public class Simulator {
 		return min;
 	}
 
-	private float getMinTime(EventType event) {
-		// marcar como ja lido ou trocar fila por lista e remover
-		float min = schedQueue.get(schedQueue.size()-1).getTime();
-		for (Scheduler sched : schedQueue) {
-			if (sched.getTime() < min && event == sched.getEventType())
-				min = sched.getTime();
-		}
-		return min;
-	}
-	
 	//Contabiliza tempos
 	private void countingTime() {
 		ResultTable currentState = result.get(result.size()-1);
-		ResultTable beforeState = result.get(result.size()-2);				
-		float diffTime = currentState.getGlobalTime() - beforeState.getGlobalTime(); 
+		ResultTable beforeState = result.get(result.size()-2);
+		double diffTime = currentState.getGlobalTime() - beforeState.getGlobalTime(); 
 		int queueIndex = beforeState.getTotalQueue();
-		currentState.setQueueValue(diffTime + beforeState.getQueueValue(queueIndex), queueIndex);
+		
+		for (int i = 0; i < currentState.getQueueSize().length; i++) {
+			if(i == queueIndex){
+				currentState.setQueueValue(diffTime + beforeState.getQueueValue(queueIndex), queueIndex);
+			} else {
+				double val = beforeState.getQueueValue(i); 
+				currentState.setQueueValue(val, i);
+			}
+		}
 	}
 	
 	//algoritmo de chegada
@@ -119,8 +123,8 @@ public class Simulator {
 	
 	//agenda chegada
 	private void scheduleArrival(int minArrival, int maxArrival){
-		float sortition = generatePseudoRandom(minArrival, maxArrival);
-		float time = globalTime + sortition;
+		double sortition = generatePseudoRandom(minArrival, maxArrival);
+		double time = globalTime + sortition;
 		Scheduler arrival = new Scheduler(EventType.CH, eventCount, time, sortition);
 		schedQueue.add(arrival);
 		eventCount++;
@@ -128,29 +132,27 @@ public class Simulator {
 
 	//agenda saida
 	private void scheduleOutput(int minOutput, int maxOutput){
-		float sortition = generatePseudoRandom(minOutput, maxOutput);
-		float time = globalTime + sortition;
+		double sortition = generatePseudoRandom(minOutput, maxOutput);
+		double time = globalTime + sortition;
 		Scheduler output = new Scheduler(EventType.SA, eventCount, time, sortition);
 		schedQueue.add(output);
 		eventCount++;
 	}
 	
-	//gera um pseudo aleatorio
-	
-	float[] pseudo = new float[]{0.8f, 0.2f, 0.4f,0.7f,0.5f,0.3f};
-	
-	private float generatePseudoRandom(float init, float finish) {
-//		double seed = Math.random();
-//		return (float) (((finish - init) * seed) + init);
-		float val = 0f;
-		for(int i = 0; i < pseudo.length ; i++){
-			if(pseudo[i] > 0) {
-				val = pseudo[i];
-				pseudo[i] = -1f;
-				return (float) (((finish - init) * val) + init);
-			}
-		}
-		return (float) (((finish - init) * val) + init);
+	//gera um pseudo aleatorio	
+	//double[] pseudo = new double[]{0.8, 0.2, 0.4,0.7,0.5,0.3};
+	private double generatePseudoRandom(double init, double finish) {
+		double seed = Math.random();
+		return (double) (((finish - init) * seed) + init);
+//		double val = 0f;
+//		for(int i = 0; i < pseudo.length ; i++){
+//			if(pseudo[i] > 0) {
+//				val = pseudo[i];
+//				pseudo[i] = -1f;
+//				return (((finish - init) * val) + init);
+//			}
+//		}
+//		return (((finish - init) * val) + init);
 	}
 	
 	public ArrayList<ResultTable> getResult(){

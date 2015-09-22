@@ -70,7 +70,7 @@ public class Simulator {
 		double d = 0;
 		double[] probabilities = this.getProbabilities(); 
 		for (int i = 0; i < probabilities.length; i++) {
-			d += probabilities[i] * (min(i, servers)); //TODO: dividir por S
+			d += probabilities[i] * (min(i, servers) / (arrivalRate/2) ); //TODO: dividir por S
 		}
 		
 		return d;
@@ -81,7 +81,7 @@ public class Simulator {
 		double u = 0;
 		double[] probabilities = this.getProbabilities();
 		for (int i = 0; i < probabilities.length; i++) {
-			u += probabilities[i] * (min(i, servers) / servers);
+			u += probabilities[i] * ( min(i, servers) / servers);
 		}
 		return u;
 	}
@@ -102,7 +102,7 @@ public class Simulator {
 		return this. getPopulation() / this.getFlow();
 	}
 	
-	private int min(int j, int c) {
+	private double min(int j, int c) {
 		if(j < c)
 			return j;
 		return c;

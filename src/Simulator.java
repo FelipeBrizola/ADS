@@ -10,11 +10,12 @@ public class Simulator {
 	int queue = 0;
 	double globalTime = 0f;
 	int eventCount = 1;
+	double arrivalRate = 0;
 
 	public void run(int maxCapacity, int maxServers, int minArrivalCustomer, int maxArrivalCustomer,
 			int minAttendanceCustomer, int maxAttendanceCustomer,
 			double finalTime) {
-		
+		this.arrivalRate = minArrivalCustomer + maxArrivalCustomer;
 		this.capacity = maxCapacity;
 		this.servers = maxServers;
 
@@ -54,8 +55,7 @@ public class Simulator {
 		}
 	}
 	
-	public double[] getProbabilities()
-	{
+	public double[] getProbabilities() {
 		double probabilities[] = new double[capacity+1];
 		ResultTable res = result.get(result.size()-1);
 		for (int i = 0; i < res.getQueueSize().length; i++) {
@@ -63,6 +63,49 @@ public class Simulator {
 		}
 		
 		return probabilities;
+	}
+	
+	//vazao
+	public double getFlow() {
+		double d = 0;
+		double[] probabilities = this.getProbabilities(); 
+		for (int i = 0; i < probabilities.length; i++) {
+			d += probabilities[i] * (min(i, servers)); //TODO: dividir por S
+		}
+		
+		return d;
+	}
+	
+	//utilizacao
+	public double getUtilization() {
+		double u = 0;
+		double[] probabilities = this.getProbabilities();
+		for (int i = 0; i < probabilities.length; i++) {
+			u += probabilities[i] * (min(i, servers) / servers);
+		}
+		return u;
+	}
+	
+	//populacao
+	public double getPopulation() {
+		double n = 0;
+		double[] probabilities = this.getProbabilities();
+		for (int i = 0; i < probabilities.length; i++) {
+			n += probabilities[i] * i;
+		}
+		
+		return n;
+	}
+	
+	//tempo resposta
+	public double getResponseTime() {
+		return this. getPopulation() / this.getFlow();
+	}
+	
+	private int min(int j, int c) {
+		if(j < c)
+			return j;
+		return c;
 	}
 	
 	private Scheduler getMinScheduler() {

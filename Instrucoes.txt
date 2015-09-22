@@ -1,0 +1,8 @@
+## Felipe Brizola, Eduardo Curcino.
+
+## Como utilizar: Abrir o terminal no diretorio src e digitar "java Main param1, param2, param3, param4, param5, param6, param7" 
+onde paramX sao os argumentos para o simulador, sao eles: capacidade máxima (numero máximo de clientes), numero de servidores,
+tempo minimo de chegada de clientes, tempo maximo de chegada de clientes, tempo minimo de atendimento de clientes, 
+tempo maximo de atendimento de clientes, tempo de simulacao. 
+Respectivamente estes sao os parametros do simulador. 
+

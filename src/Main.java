@@ -1,5 +1,3 @@
-import java.util.Scanner;
-
 public class Main {
 
 	/**
@@ -10,17 +8,17 @@ public class Main {
 		// TODO Auto-generated method stub
 
 		int[] num = new int[args.length];
-		for(int i = 0;i < args.length;i++)
-		{
-		   num[i] = Integer.parseInt(args[i]);
-		}	
-		
+		for (int i = 0; i < args.length; i++) {
+			num[i] = Integer.parseInt(args[i]);
+		}
+
 		Simulator s = new Simulator();
 
-		// capacidade, servidores, minCh, maxCh, minSa, maxSa, simTime
+		//capacidade, servidores, minCh, maxCh, minSa, maxSa, simTime
+		//caso executar pelo eclipse trocar num[x] pelo valor(int) desejado
 		s.run(num[0], num[1], num[2], num[3], num[4], num[5], num[6]);
 
-		// s.run(3, 3, 0, 8, 0, 10, 100000);
+		// Exibe a tabela de saida dos resultados
 		// System.out.println("Evento   | Fila   | Tempo   ");
 		// for(ResultTable res : s.getResult()){
 		// System.out.println(res);

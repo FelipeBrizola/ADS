@@ -10,13 +10,12 @@ public class Simulator {
 	int queue = 0;
 	double globalTime = 0f;
 	int eventCount = 1;
-	double arrivalRate = 0;
+	int outputCount = 0;
 
 	public void run(int maxCapacity, int maxServers, int minArrivalCustomer, int maxArrivalCustomer,
 			int minAttendanceCustomer, int maxAttendanceCustomer,
 			double finalTime) {
-		this.arrivalRate = minArrivalCustomer + maxArrivalCustomer;
-		this.capacity = maxCapacity;
+		capacity = maxCapacity;
 		this.servers = maxServers;
 
 		ResultTable initial = new ResultTable(maxCapacity);
@@ -36,8 +35,10 @@ public class Simulator {
 		while(globalTime < finalTime) {
 			Scheduler sc = getMinScheduler();
 			
-			globalTime = sc.getTime();
 			
+			if(sc.getTime() > finalTime) 
+				break;
+				globalTime = sc.getTime();
 			ResultTable res = new ResultTable(maxCapacity);
 			
 			res.setEvent(sc.getEventNumber()+sc.getEventType().toString());
@@ -49,6 +50,7 @@ public class Simulator {
 				runArrival(minArrivalCustomer, maxArrivalCustomer, minAttendanceCustomer, maxAttendanceCustomer);
 			} 
 			else {
+				outputCount++;
 				runOutput(minAttendanceCustomer, maxAttendanceCustomer);
 			}
 			res.setTotalQueue(queue);
@@ -70,7 +72,7 @@ public class Simulator {
 		double d = 0;
 		double[] probabilities = this.getProbabilities(); 
 		for (int i = 0; i < probabilities.length; i++) {
-			d += probabilities[i] * (min(i, servers) / (arrivalRate/2) ); //TODO: dividir por S
+			d += probabilities[i] * (min(i, servers) / (outputCount/globalTime) );
 		}
 		
 		return d;

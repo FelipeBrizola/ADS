@@ -7,7 +7,7 @@ public class Main {
 		Simulator s = new Simulator();
 		
 		//capacidade, servidores, minCh, maxCh, minSa, maxSa, simTime
-		s.run(5, 2, 2, 3, 4, 5, 10);
+		s.run(5, 2, 2, 3, 4, 5, 5000);
 		//s.run(args[0],args[1],args[2],args[3],args[4],args[5],args[6]);
 
 		//s.run(3, 3, 0, 8, 0, 10, 100000);

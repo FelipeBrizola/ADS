@@ -4,5 +4,8 @@
 onde paramX sao os argumentos para o simulador, sao eles: capacidade máxima (numero máximo de clientes), numero de servidores,
 tempo minimo de chegada de clientes, tempo maximo de chegada de clientes, tempo minimo de atendimento de clientes, 
 tempo maximo de atendimento de clientes, tempo de simulacao. 
-Respectivamente estes sao os parametros do simulador. 
+Respectivamente estes sao os parametros do simulador.
+No caso do ambiente ser Windows o diretório deve ser bin e não src.
+
+O programa também pode ser aberto no eclipse porém os argumentos devem ser recebidos no main.
 

@@ -18,6 +18,7 @@ public class Simulator {
 		capacity = maxCapacity;
 		this.servers = maxServers;
 
+		//Resultado para tempo 0 é adicionado manualmente
 		ResultTable initial = new ResultTable(maxCapacity);
 		initial.setEvent("-");
 		initial.setGlobalTime(0f);
@@ -35,21 +36,23 @@ public class Simulator {
 		while(globalTime < finalTime) {
 			Scheduler sc = getMinScheduler();
 			
-			
 			if(sc.getTime() > finalTime) 
 				break;
-				globalTime = sc.getTime();
+			
+			globalTime = sc.getTime();
+			
 			ResultTable res = new ResultTable(maxCapacity);
 			
 			res.setEvent(sc.getEventNumber()+sc.getEventType().toString());
 			res.setGlobalTime(globalTime);
 			
 			result.add(res);
-		
+			
+			//se evento for chegada executa evento chegada
 			if(sc.getEventType() == EventType.CH) {
 				runArrival(minArrivalCustomer, maxArrivalCustomer, minAttendanceCustomer, maxAttendanceCustomer);
 			} 
-			else {
+			else { // senao executa saida
 				outputCount++;
 				runOutput(minAttendanceCustomer, maxAttendanceCustomer);
 			}
@@ -57,6 +60,7 @@ public class Simulator {
 		}
 	}
 	
+	//calcula as probabilides marginais de cada fila
 	public double[] getProbabilities() {
 		double probabilities[] = new double[capacity+1];
 		ResultTable res = result.get(result.size()-1);
@@ -110,6 +114,7 @@ public class Simulator {
 		return c;
 	}
 	
+	//remove e retorna do escalonador o agendamento de menor tempo
 	private Scheduler getMinScheduler() {
 		Scheduler min = new Scheduler(EventType.CH, 0, Double.MAX_VALUE, 0f);
 		int removeIndex = -1;
@@ -185,23 +190,14 @@ public class Simulator {
 	}
 	
 	//gera um pseudo aleatorio	
-	//double[] pseudo = new double[]{0.8, 0.2, 0.4,0.7,0.5,0.3};
 	private double generatePseudoRandom(double init, double finish) {
 		double seed = Math.random();
 		return (double) (((finish - init) * seed) + init);
-//		double val = 0f;
-//		for(int i = 0; i < pseudo.length ; i++){
-//			if(pseudo[i] > 0) {
-//				val = pseudo[i];
-//				pseudo[i] = -1f;
-//				return (((finish - init) * val) + init);
-//			}
-//		}
-//		return (((finish - init) * val) + init);
 	}
 	
+	//tabela de resultado
 	public ArrayList<ResultTable> getResult(){
 		return result;
 	}
 	
-}
+}	
